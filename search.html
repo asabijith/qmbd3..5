@@ -134,13 +134,13 @@
             margin-bottom: 20px;
         }
         .weui--back-filled {
-  display: inline-block;
-  width: 1.5rem;
-  height: 3rem;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 24'%3E%3Cpath fill='%230066ff' fill-rule='evenodd' d='m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z'/%3E%3C/svg%3E");
-}
+            display: inline-block;
+            width: 1.5rem;
+            height: 3rem;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 24'%3E%3Cpath fill='%230066ff' fill-rule='evenodd' d='m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z'/%3E%3C/svg%3E");
+        }
     </style>
 </head>
 <body>
@@ -157,71 +157,97 @@
         const API_KEY = '4f87c7ab385a4bab29e9195d359732e5';
         const API_BASE_URL = 'https://api.themoviedb.org/3';
         const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
-
+    
         const searchInput = document.getElementById('searchInput');
         const movieList = document.getElementById('movieList');
-
+    
         let timeoutId;
-
+    
         searchInput.addEventListener('input', (e) => {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 const query = e.target.value.trim();
-                if (query) {
+                if (query.length >= 2) {
                     searchMovies(query);
-                } else {
+                } else if (query.length === 0) {
                     movieList.innerHTML = '';
                 }
             }, 500);
         });
-
+    
         async function searchMovies(query) {
             try {
-                const response = await fetch(
-                    `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
-                );
+                console.log('Searching for:', query);
+                const url = `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&language=en-US&page=1&include_adult=false`;
+                console.log('Request URL:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
-                displayMovies(data.results);
+                console.log('API response:', data);
+                
+                if (data.results && data.results.length === 0) {
+                    movieList.innerHTML = '<p style="text-align: center; padding: 20px;">No movies found.</p>';
+                } else if (data.results) {
+                    displayMovies(data.results);
+                }
             } catch (error) {
                 console.error('Error searching movies:', error);
+                movieList.innerHTML = '<p style="text-align: center; padding: 20px;">Error searching movies. Please try again.</p>';
             }
         }
-
+    
         function displayMovies(movies) {
-            movieList.innerHTML = movies.map(movie => `
-                <div class="movie-item" onclick="location.href='movie.html?movieId=${movie.id}'">
-                    <img 
-                        class="movie-poster" 
-                        src="${movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 'https://via.placeholder.com/100x150'}" 
-                        alt="${movie.title}"
-                    >
-                    <div class="movie-info">
-                        <h3 class="movie-title">${movie.title}</h3>
-                        <div class="movie-meta">
-                            <span class="rating">
-                                <span class="star">★</span>
-                                ${movie.vote_average.toFixed(1)}
-                            </span>
-                            <span class="dot"></span>
-                            <span>${new Date(movie.release_date).getFullYear()}</span>
-                            <span class="dot"></span>
-                            <span>13+</span>
-                            <span class="dot"></span>
-                            <span class="duration">2h 23min</span>
-                        </div>
-                        <div class="movie-genres">
-                            Action, Adventure, Drama
-                        </div>
+    movieList.innerHTML = movies.map(movie => {
+        // Default fallback image URL - replace this with your preferred fallback image
+        const fallbackImageUrl = 'https://via.placeholder.com/100x150?text=No+Poster';
+        
+        // Construct poster URL only if poster_path exists
+        const posterUrl = movie.poster_path 
+            ? `${IMAGE_BASE_URL}${movie.poster_path}`
+            : fallbackImageUrl;
+
+        return `
+            <div class="movie-item" onclick="location.href='movie.html?movieId=${movie.id}'">
+                <img 
+                    class="movie-poster" 
+                    src="${posterUrl}" 
+                    alt="${movie.title || 'Movie poster'}"
+                    onerror="this.onerror=null; this.src='${fallbackImageUrl}';"
+                >
+                <div class="movie-info">
+                    <h3 class="movie-title">${movie.title || 'Unknown Title'}</h3>
+                    <div class="movie-meta">
+                        <span class="rating">
+                            <span class="star">★</span>
+                            ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
+                        </span>
+                        <span class="dot"></span>
+                        <span>${movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</span>
+                        <span class="dot"></span>
+                        <span>13+</span>
+                        <span class="dot"></span>
+                        <span class="duration">2h 23min</span>
+                    </div>
+                    <div class="movie-genres">
+                        ${movie.genre_ids ? 'Action, Adventure, Drama' : 'Genre not available'}
                     </div>
                 </div>
-            `).join('');
-        }
-
-        // Initial search for "Avengers" when page loads
+            </div>
+        `;
+    }).join('');
+}
+    
         window.addEventListener('DOMContentLoaded', () => {
             searchInput.value = 'Avengers';
             searchMovies('Avengers');
         });
     </script>
+    
 </body>
 </html>
