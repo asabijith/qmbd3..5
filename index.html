@@ -220,13 +220,13 @@
 .alert {
             display: none; /* Set to none to keep it hidden initially */
             position: absolute; /* Position absolute for centering */
-            top: 50%; /* Center vertically */
+            top: 0%; /* Center vertically */
             left: 50%; /* Center horizontally */
             transform: translate(-50%, -50%); /* Offset by half width and height */
             margin-top: 20px;
             padding: 15px;
             border-radius: 5px;
-            background-color: rgba(255, 235, 205, 0.8);
+            background-color: rgb(255, 255, 255);
             color: #333;
             animation: fadeIn 0.5s forwards;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -276,9 +276,7 @@
             <div class="category-pill">Adventure</div>
         </div>
     </div>
-    <div class="alert" id="downloadAlert">
-        Downloads are currently not available. Please check back later!
-    </div>
+   
     <!-- Most Popular Section -->
     <div class="movie-section">
         <div class="category-title">
@@ -292,11 +290,17 @@
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
+        
         <div class="nav-content">
+            
             <a href="#" class="nav-item active">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
+
             </a>
+            <div class="alert" id="downloadAlert">
+                Downloads are currently not available. Please check back later!
+            </div>
             <a href="search.html" class="nav-item">
                 <i class="fas fa-search"></i>
                 <span>Search</span>
