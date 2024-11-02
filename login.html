@@ -196,6 +196,23 @@
                 margin-bottom: 20px;
             }
         }
+        .alert {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: rgba(244, 255, 220, 0.8);
+            color: #333;
+            animation: fadeIn 0.5s forwards;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -211,7 +228,11 @@
     <div class="main-container">
         <div class="logo">iNox</div>
         <h1 class="heading">Get ready to dive into the greatest stories in TV and Film</h1>
-        <button class="subscribe-button">Subscribe Now</button>
+        <button class="subscribe-button" onclick="showAlert()">Subscribe Now</button>
+        <div class="alert" id="alertBox">
+            Thank you for your interest! Unfortunately, subscriptions are not available at this beta stage. Please stay tuned for updates!
+            ==USE SINGIN METHOD==
+        </div>
         <button class="signin-button" onclick="signInWithGoogle()">Sign In</button>
         <div class="signup-text">
             Don't have an account? <a href="#" class="signup-link">Sign Up</a>
@@ -255,6 +276,14 @@
 
         // Change background every 30 seconds
         setInterval(updateBackground, 30000);
+        function showAlert() {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.style.display = 'block';
+
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000); // Hide alert after 5 seconds
+        }
     </script>
 </body>
 </html>
