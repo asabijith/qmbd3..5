@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #141414;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .search-container {
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            background: #141414;
+            z-index: 100;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .movie-list {
+            padding: 0 20px;
+        }
+
+        .movie-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .movie-poster {
+            width: 100px;
+            height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .movie-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .movie-meta {
+            display: flex;
+            gap: 10px;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .movie-genres {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .star {
+            color: #FFD700;
+        }
+
+        .duration {
+            display: flex;
+            align-items: center;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 3px;
+            height: 3px;
+            background: #888;
+            border-radius: 50%;
+            margin: 0 8px;
+        }
+        .back-button {
+            background: #2b2b2b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .weui--back-filled {
+  display: inline-block;
+  width: 1.5rem;
+  height: 3rem;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 24'%3E%3Cpath fill='%230066ff' fill-rule='evenodd' d='m3.343 12l7.071 7.071L9 20.485l-7.778-7.778a1 1 0 0 1 0-1.414L9 3.515l1.414 1.414z'/%3E%3C/svg%3E");
+}
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <button class="back-button" onclick="history.back()"><span class="weui--back-filled"></span></button>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search movies..." id="searchInput">
+        </div>
+    </div>
+    <div class="movie-list" id="movieList"></div>
+
+    <script>
+        const API_KEY = '4f87c7ab385a4bab29e9195d359732e5';
+        const API_BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+
+        const searchInput = document.getElementById('searchInput');
+        const movieList = document.getElementById('movieList');
+
+        let timeoutId;
+
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                const query = e.target.value.trim();
+                if (query) {
+                    searchMovies(query);
+                } else {
+                    movieList.innerHTML = '';
+                }
+            }, 500);
+        });
+
+        async function searchMovies(query) {
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+                );
+                const data = await response.json();
+                displayMovies(data.results);
+            } catch (error) {
+                console.error('Error searching movies:', error);
+            }
+        }
+
+        function displayMovies(movies) {
+            movieList.innerHTML = movies.map(movie => `
+                <div class="movie-item" onclick="location.href='movie.html?movieId=${movie.id}'">
+                    <img 
+                        class="movie-poster" 
+                        src="${movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 'https://via.placeholder.com/100x150'}" 
+                        alt="${movie.title}"
+                    >
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-meta">
+                            <span class="rating">
+                                <span class="star">★</span>
+                                ${movie.vote_average.toFixed(1)}
+                            </span>
+                            <span class="dot"></span>
+                            <span>${new Date(movie.release_date).getFullYear()}</span>
+                            <span class="dot"></span>
+                            <span>13+</span>
+                            <span class="dot"></span>
+                            <span class="duration">2h 23min</span>
+                        </div>
+                        <div class="movie-genres">
+                            Action, Adventure, Drama
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initial search for "Avengers" when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            searchInput.value = 'Avengers';
+            searchMovies('Avengers');
+        });
+    </script>
+</body>
+</html>

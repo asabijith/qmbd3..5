@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Movies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Your existing styles here... */
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="content">
+            <h1>Saved Movies</h1>
+            <div id="moviesList"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            // Your Firebase config here
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        async function loadSavedMovies() {
+            const user = auth.currentUser;
+            if (user) {
+                const userId = user.uid;
+                const moviesRef = collection(db, 'savedMovies', userId, 'movies');
+                const snapshot = await getDocs(moviesRef);
+                const moviesList = document.getElementById('moviesList');
+
+                snapshot.forEach(doc => {
+                    const movie = doc.data();
+                    const movieElement = document.createElement('div');
+                    movieElement.innerHTML = `
+                        <h2>${movie.title}</h2>
+                        <p>${movie.overview}</p>
+                        <p>Rating: ${movie.rating}</p>
+                        <p>Year: ${movie.year}</p>
+                        <p>Duration: ${movie.duration}</p>
+                        <p>Genres: ${movie.genres.join(', ')}</p>
+                        <p>Cast: ${movie.cast.map(member => `${member.name} as ${member.character}`).join(', ')}</p>
+                    `;
+                    moviesList.appendChild(movieElement);
+                });
+            } else {
+                document.getElementById('moviesList').innerHTML = '<p>You need to log in to view saved movies.</p>';
+            }
+        }
+
+        window.onload = loadSavedMovies;
+    </script>
+</body>
+</html>
