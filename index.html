@@ -33,8 +33,19 @@
             height: 50vh;
             position: relative;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto; /* Set to auto to maintain aspect ratio */
+            height: auto; /* Set to auto to maintain aspect ratio */
+            z-index: 1; /* Ensure video is below overlay */
+            transform: translate(-50%, -50%);
+            object-fit: cover; /* Make sure the video covers the hero area */
         }
 
         .hero-overlay {
@@ -48,7 +59,9 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+            z-index: 2; /* Ensure overlay is above video */
         }
+
 
         /* Categories */
         .categories {
@@ -167,16 +180,86 @@
         .nav-item i {
             font-size: 1.2rem;
         }
-    </style>
+        .audio-icon {
+    position: absolute;
+    top: 20px; /* Adjust vertical positioning */
+    right: 20px; /* Adjust horizontal positioning */
+    cursor: pointer;
+    z-index: 10; /* Ensure it’s on top of the video */
+}
+
+.audio-icon img {
+    width: 30px; /* Adjust size as necessary */
+    height: auto;
+}
+.flowbite--volume-mute-solid {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230066ff' d='M5.707 4.293a1 1 0 0 0-1.414 1.414l14 14a1 1 0 0 0 1.414-1.414l-.004-.005C21.57 16.498 22 13.938 22 12a9.97 9.97 0 0 0-2.929-7.071a1 1 0 1 0-1.414 1.414A7.97 7.97 0 0 1 20 12c0 1.752-.403 3.636-1.712 4.873l-1.433-1.433C17.616 14.37 18 13.107 18 12c0-1.678-.69-3.197-1.8-4.285a1 1 0 1 0-1.4 1.428A4 4 0 0 1 16 12c0 .606-.195 1.335-.59 1.996L13 11.586V6.135c0-1.696-1.978-2.622-3.28-1.536L7.698 6.284l-1.99-1.991ZM4 8h.586L13 16.414v1.451c0 1.696-1.978 2.622-3.28 1.536L5.638 16H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2'/%3E%3C/svg%3E");
+}
+   
+.streamline--volume-mute-solid {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='%230066ff' fill-rule='evenodd' d='M9 3.005A1.454 1.454 0 0 0 6.716 1.78l-.003.002L2.842 4.5H1.5C.68 4.5 0 5.18 0 6v2c0 .82.68 1.5 1.5 1.5h1.339l3.78 2.716l.007.005c.97.672 2.348-.024 2.374-1.21zm4.78 2.09a.75.75 0 0 1 0 1.06L12.936 7l.844.845a.75.75 0 0 1-1.06 1.06l-.845-.844l-.845.844a.75.75 0 1 1-1.06-1.06L10.814 7l-.844-.845a.75.75 0 0 1 1.06-1.06l.845.844l.845-.844a.75.75 0 0 1 1.06 0' clip-rule='evenodd'/%3E%3C/svg%3E");
+}
+.octicon--unmute-16 {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%230066ff' d='M7.563 2.069A.75.75 0 0 1 8 2.75v10.5a.751.751 0 0 1-1.238.57L3.472 11H1.75A1.75 1.75 0 0 1 0 9.25v-2.5C0 5.784.784 5 1.75 5h1.723l3.289-2.82a.75.75 0 0 1 .801-.111M6.5 4.38L4.238 6.319a.75.75 0 0 1-.488.181h-2a.25.25 0 0 0-.25.25v2.5c0 .138.112.25.25.25h2c.179 0 .352.064.488.18L6.5 11.62Zm6.096-2.038a.75.75 0 0 1 1.06 0a8 8 0 0 1 0 11.314a.75.75 0 0 1-1.042-.018a.75.75 0 0 1-.018-1.042a6.5 6.5 0 0 0 0-9.193a.75.75 0 0 1 0-1.06Zm-1.06 2.121l-.001.001a5 5 0 0 1 0 7.07a.749.749 0 0 1-1.275-.326a.75.75 0 0 1 .215-.734a3.5 3.5 0 0 0 0-4.95a.75.75 0 1 1 1.061-1.061'/%3E%3C/svg%3E");
+}
+.alert {
+            display: none; /* Set to none to keep it hidden initially */
+            position: absolute; /* Position absolute for centering */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Offset by half width and height */
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: rgba(255, 235, 205, 0.8);
+            color: #333;
+            animation: fadeIn 0.5s forwards;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60px); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <div class="hero">
-        <div class="hero-overlay">
-            <h1>Captain America</h1>
-            <p>Action, Adventure • 2h 4m</p>
-        </div>
+<!-- Hero Section -->
+<!-- Hero Section -->
+<div class="hero">
+    <video autoplay loop class="hero-video" id="heroVideo">
+        <source src="https://dl.dropbox.com/scl/fi/4nimk80vl2xib2mxjsucu/venom-the-last-dance-final-trailer-hd-1080-publer.io.mp4?rlkey=93g7r1b52z4uv4iivwtikma0o&st=f1ioosq4&dl=0" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <div class="hero-overlay">
+        <h1>Captain America</h1>
+        <p>Action, Adventure • 2h 4m</p>
     </div>
+    <div id="audioIcon" class="audio-icon" title="Mute Audio">
+        <span class="streamline--volume-mute-solid" id="muteIcon"></span>
+        <span class="octicon--unmute-16" id="unmuteIcon" style="display: none;"></span>
+    </div>
+</div>
+
+
+
 
     <!-- Categories Section -->
     <div class="categories">
@@ -193,7 +276,9 @@
             <div class="category-pill">Adventure</div>
         </div>
     </div>
-
+    <div class="alert" id="downloadAlert">
+        Downloads are currently not available. Please check back later!
+    </div>
     <!-- Most Popular Section -->
     <div class="movie-section">
         <div class="category-title">
@@ -217,14 +302,19 @@
                 <span>Search</span>
             </a>
             
-        <a href="saved.html" class="nav-item">
-            <i class="fas fa-bookmark"></i>
-            <span>Saved</span>
-        </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-download"></i>
-                <span>Downloads</span>
+       
+           
+            <a href="" class="nav-item">
+                <i class="fas fa-bookmark"></i>
+                <span>Saved</span>
             </a>
+
+        <a href="#" class="nav-item" onclick="showDownloadAlert(event)">
+            <i class="fas fa-download"></i>
+            <span>Downloads</span>
+        </a>
+       
+
             <a href="profile.html" class="nav-item" id="user-nav">
                 <img id="user-photo" src="https://via.placeholder.com/30" alt="Profile Picture" style="border-radius: 50%; width: 30px; height: 30px;">
                 <span id="user-name">User</span>
@@ -519,6 +609,42 @@ document.addEventListener('DOMContentLoaded', loadUserProfile);
             // Redirect to login page if not logged in
             window.location.href = 'login.html';
         }
+    
+        const video = document.getElementById('heroVideo');
+const muteIcon = document.getElementById('muteIcon');
+const unmuteIcon = document.getElementById('unmuteIcon');
+
+// Set the initial state of the video
+video.muted = true; // Start with the video muted
+muteIcon.style.display = 'block'; // Show mute icon
+unmuteIcon.style.display = 'none'; // Hide unmute icon
+
+// Mute/Unmute video when the icon is clicked
+audioIcon.addEventListener('click', () => {
+    if (video.muted) {
+        video.muted = false; // Unmute the video
+        muteIcon.style.display = 'none'; // Hide mute icon
+        unmuteIcon.style.display = 'block'; // Show unmute icon
+        audioIcon.title = "Mute Audio"; // Update title for clarity
+    } else {
+        video.muted = true; // Mute the video
+        muteIcon.style.display = 'block'; // Show mute icon
+        unmuteIcon.style.display = 'none'; // Hide unmute icon
+        audioIcon.title = "Unmute Audio"; // Update title for clarity
+    }
+});
+
+function showDownloadAlert(event) {
+            event.preventDefault(); // Prevent default link behavior
+            const alertBox = document.getElementById('downloadAlert');
+            alertBox.style.display = 'block'; // Show the alert
+
+            // Hide the alert after 5 seconds
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
 </script>
 </body>
 </html>
